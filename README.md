@@ -1,62 +1,39 @@
-# CRSLab
+# TFairCRS: Towards Fairness in Conversational Recommender Systems
 
-[![Pypi Latest Version](https://img.shields.io/pypi/v/crslab)](https://pypi.org/project/crslab)
-[![Release](https://img.shields.io/github/v/release/rucaibox/crslab.svg)](https://github.com/rucaibox/crslab/releases)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
-[![arXiv](https://img.shields.io/badge/arXiv-CRSLab-%23B21B1B)](https://arxiv.org/abs/2101.00939)
-[![Documentation Status](https://readthedocs.org/projects/crslab/badge/?version=latest)](https://crslab.readthedocs.io/en/latest/?badge=latest)
 
-[Paper](https://arxiv.org/pdf/2101.00939.pdf) | [Docs](https://crslab.readthedocs.io/en/latest/?badge=latest)
-| [中文版](./README_CN.md)
+## Overview
 
-**CRSLab** is an open-source toolkit for building Conversational Recommender System (CRS). It is developed based on
-Python and PyTorch. CRSLab has the following highlights:
+**TFairCRS** is a research project that addresses fairness issues in Conversational Recommender Systems (CRS). This work is built on top of the [CRSLab](https://github.com/RUCAIBox/CRSLab) framework and introduces novel approaches to ensure fair and unbiased recommendations in conversational settings.
 
-- **Comprehensive benchmark models and datasets**: We have integrated commonly-used 6 datasets and 18 models, including graph neural network and pre-training models such as R-GCN, BERT and GPT-2. We have preprocessed these datasets to support these models, and release for downloading.
-- **Extensive and standard evaluation protocols**: We support a series of widely-adopted evaluation protocols for testing and comparing different CRS.
-- **General and extensible structure**: We design a general and extensible structure to unify various conversational recommendation datasets and models, in which we integrate various built-in interfaces and functions for quickly development.
-- **Easy to get started**: We provide simple yet flexible configuration for new researchers to quickly start in our library. 
-- **Human-machine interaction interfaces**: We provide flexible human-machine interaction interfaces for researchers to conduct qualitative analysis.
+### Key Features
 
-<p align="center">
-  <img src="https://i.loli.net/2020/12/30/6TPVG4pBg2rcDf9.png" alt="RecBole v0.1 architecture" width="400">
-  <br>
-  <b>Figure 1</b>: The overall framework of CRSLab
-</p>
+- **Fairness-aware recommendation**: Incorporates fairness constraints into the conversational recommendation process
+- **Comprehensive evaluation**: Evaluates both recommendation quality and fairness metrics
+- **Multiple datasets**: Supports evaluation on standard CRS benchmarks including ReDial, TG-ReDial, and INSPIRED
+- **Extensible framework**: Built on CRSLab for easy integration and experimentation
 
+## Table of Contents
 
-
-
-- [Installation](#Installation)
-- [Quick-Start](#Quick-Start)
-- [Models](#Models)
-- [Datasets](#Datasets)
-- [Performance](#Performance)
-- [Releases](#Releases)
-- [Contributions](#Contributions)
-- [Citing](#Citing)
-- [Team](#Team)
-- [License](#License)
-
-
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Method](#method)
+- [Datasets](#datasets)
+- [Experiments](#experiments)
+- [Citation](#citation)
+- [License](#license)
 
 ## Installation
 
-CRSLab works with the following operating systems：
+### Requirements
 
-- Linux
-- Windows 10
-- macOS X
+- Python 3.6 or later
+- PyTorch 1.4.0 or later
+- CUDA 9.2 or later (for GPU support)
 
-CRSLab requires Python version 3.6 or later.
+### Step 1: Install PyTorch
 
-CRSLab requires torch version 1.4.0 or later. If you want to use CRSLab with GPU, please ensure that CUDA or CUDAToolkit version is 9.2 or later. Please use the combinations shown in this [Link](https://pytorch-geometric.com/whl/) to ensure the normal operation of PyTorch Geometric.
-
-
-
-### Install PyTorch
-
-Use PyTorch [Locally Installation](https://pytorch.org/get-started/locally/) or [Previous Versions Installation](https://pytorch.org/get-started/previous-versions/) commands to install PyTorch. For example, on Linux and Windows 10:
+Install PyTorch according to your CUDA version. For example:
 
 ```bash
 # CUDA 10.1
@@ -66,32 +43,23 @@ pip install torch==1.6.0+cu101 torchvision==0.7.0+cu101 -f https://download.pyto
 pip install torch==1.6.0+cpu torchvision==0.7.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 ```
 
-If you want to use CRSLab with GPU, make sure the following command prints `True` after installation:
+Verify GPU availability (if using GPU):
 
 ```bash
-$ python -c "import torch; print(torch.cuda.is_available())"
->>> True
+python -c "import torch; print(torch.cuda.is_available())"
+# Should print: True
 ```
 
+### Step 2: Install PyTorch Geometric
 
-
-### Install PyTorch Geometric
-
-Ensure that at least PyTorch 1.4.0 is installed:
+Check your PyTorch and CUDA versions:
 
 ```bash
-$ python -c "import torch; print(torch.__version__)"
->>> 1.6.0
+python -c "import torch; print(torch.__version__)"
+python -c "import torch; print(torch.version.cuda)"
 ```
 
-Find the CUDA version PyTorch was installed with:
-
-```bash
-$ python -c "import torch; print(torch.version.cuda)"
->>> 10.1
-```
-
-Install the relevant packages:
+Install PyTorch Geometric components:
 
 ```bash
 pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
@@ -101,173 +69,184 @@ pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${TORCH
 pip install torch-geometric
 ```
 
-where `${CUDA}` and `${TORCH}` should be replaced by your specific CUDA version (`cpu`, `cu92`, `cu101`, `cu102`, `cu110`) and PyTorch version (`1.4.0`, `1.5.0`, `1.6.0`, `1.7.0`) respectively. For example, for PyTorch 1.6.0 and CUDA 10.1, type:
+Replace `${TORCH}` and `${CUDA}` with your versions (e.g., `1.6.0` and `cu101`).
+
+### Step 3: Install Dependencies
 
 ```bash
-pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.6.0+cu101.html
-pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.6.0+cu101.html
-pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.6.0+cu101.html
-pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.6.0+cu101.html
-pip install torch-geometric
+pip install -r requirements.txt
 ```
 
+## Quick Start
 
+### Basic Usage
 
-### Install CRSLab
-
-You can install from pip:
-
-```bash
-pip install crslab
-```
-
-OR install from source:
+Run TFairCRS with default configuration:
 
 ```bash
-git clone https://github.com/RUCAIBox/CRSLab && cd CRSLab
-pip install -e .
-```
-
-
-
-## Quick-Start
-
-With the source code, you can use the provided script for initial usage of our library with cpu by default:
-
-```bash
+# CPU
 python run_crslab.py --config config/crs/kgsf/redial.yaml
+
+# Single GPU
+python run_crslab.py --config config/crs/kgsf/redial.yaml --gpu 0
+
+# Multiple GPUs
+python run_crslab.py --config config/crs/kgsf/redial.yaml --gpu 0,1
 ```
 
-The system will complete the data preprocessing, and training, validation, testing of each model in turn. Finally it will get the evaluation results of specified models.
+### Available Datasets
 
-If you want to save pre-processed datasets and training results of models, you can use the following command:
+You can run experiments on different datasets:
 
 ```bash
-python run_crslab.py --config config/crs/kgsf/redial.yaml --save_data --save_system
-python run_crslab.py --config config/crs/kgsf/tgredial.yaml --save_data --save_system
+# ReDial dataset
+python run_crslab.py --config config/crs/kgsf/redial.yaml --gpu 0
 
-python run_crslab.py --config config/crs/kbrd/redial.yaml --save_data --save_system
-python run_crslab.py --config config/crs/kbrd/tgredial.yaml --save_data --save_system
+# TG-ReDial dataset
+python run_crslab.py --config config/crs/kgsf/tgredial.yaml --gpu 0
+
+# INSPIRED dataset
+python run_crslab.py --config config/crs/kgsf/inspired.yaml --gpu 0
 ```
 
-In summary, there are following arguments in `run_crslab.py`:
+### Save and Restore Models
 
-- `--config` or `-c`: relative path for configuration file(yaml).
-- `--gpu` or `-g`: specify GPU id(s) to use, we now support multiple GPUs. Defaults to CPU(-1).
-- `--save_data` or `-sd`: save pre-processed dataset.
-- `--restore_data` or `-rd`: restore pre-processed dataset from file.
-- `--save_system` or `-ss`: save trained system.
-- `--restore_system` or `-rs`: restore trained system from file.
-- `--debug` or `-d`: use validation dataset to debug your system.
-- `--interact` or `-i`: interact with your system instead of training.
-- `--tensorboard` or `-tb`: enable tensorboard to monitor train performance.
+```bash
+# Save preprocessed data and trained model
+python run_crslab.py --config config/crs/kgsf/redial.yaml --save_data --save_system --gpu 0
 
+# Restore from saved files
+python run_crslab.py --config config/crs/kgsf/redial.yaml --restore_data --restore_system --gpu 0
+```
 
+### Debug Mode
 
-## Models
+Use validation set for quick debugging:
 
-In CRSLab, we unify the task description of conversational recommendation into three sub-tasks, namely recommendation (recommend user-preferred items), conversation (generate proper responses) and policy (select proper interactive action). The recommendation and conversation sub-tasks are the core of a CRS and have been studied in most of works. The policy sub-task is needed by recent works, by which the CRS can interact with users through purposeful strategy.
-As the first release version, we have implemented 18 models in the four categories of CRS model, Recommendation model, Conversation model and Policy model.
+```bash
+python run_crslab.py --config config/crs/kgsf/redial.yaml --debug --gpu 0
+```
 
-|       Category       |                            Model                             |      Graph Neural Network?      |       Pre-training Model?       |
-| :------------------: | :----------------------------------------------------------: | :-----------------------------: | :-----------------------------: |
-|      CRS Model       | [ReDial](https://arxiv.org/abs/1812.07617)<br/>[KBRD](https://arxiv.org/abs/1908.05391)<br/>[KGSF](https://arxiv.org/abs/2007.04032)<br/>[TG-ReDial](https://arxiv.org/abs/2010.04125)<br/>[INSPIRED](https://www.aclweb.org/anthology/2020.emnlp-main.654.pdf) |       ×<br/>√<br/>√<br/>×<br/>×       |       ×<br/>×<br/>×<br/>√<br/>√       |
-| Recommendation model | Popularity<br/>[GRU4Rec](https://arxiv.org/abs/1511.06939)<br/>[SASRec](https://arxiv.org/abs/1808.09781)<br/>[TextCNN](https://arxiv.org/abs/1408.5882)<br/>[R-GCN](https://arxiv.org/abs/1703.06103)<br/>[BERT](https://arxiv.org/abs/1810.04805) | ×<br/>×<br/>×<br/>×<br/>√<br/>× | ×<br/>×<br/>×<br/>×<br/>×<br/>√ |
-|  Conversation model  | [HERD](https://arxiv.org/abs/1507.04808)<br/>[Transformer](https://arxiv.org/abs/1706.03762)<br/>[GPT-2](http://www.persagen.com/files/misc/radford2019language.pdf) |          ×<br/>×<br/>×          |          ×<br/>×<br/>√          |
-|     Policy model     | PMI<br/>[MGCG](https://arxiv.org/abs/2005.03954)<br/>[Conv-BERT](https://arxiv.org/abs/2010.04125)<br/>[Topic-BERT](https://arxiv.org/abs/2010.04125)<br/>[Profile-BERT](https://arxiv.org/abs/2010.04125) |    ×<br/>×<br/>×<br/>×<br/>×    |    ×<br/>×<br/>√<br/>√<br/>√    |
+### Interactive Mode
 
-Among them, the four CRS models integrate the recommendation model and the conversation model to improve each other, while others only specify an individual task.
+Interact with the trained model:
 
-For Recommendation model and Conversation model, we have respectively implemented the following commonly-used automatic evaluation metrics:
+```bash
+python run_crslab.py --config config/crs/kgsf/redial.yaml --interact --restore_system --gpu 0
+```
 
-|        Category        |                           Metrics                            |
-| :--------------------: | :----------------------------------------------------------: |
-| Recommendation Metrics |      Hit@{1, 10, 50}, MRR@{1, 10, 50}, NDCG@{1, 10, 50}      |
-|  Conversation Metrics  | PPL, BLEU-{1, 2, 3, 4}, Embedding Average/Extreme/Greedy, Distinct-{1, 2, 3, 4} |
-|     Policy Metrics     |        Accuracy, Hit@{1,3,5}           |
+### Monitor Training with TensorBoard
 
+```bash
+# Enable tensorboard logging
+python run_crslab.py --config config/crs/kgsf/redial.yaml --tensorboard --gpu 0
 
+# In another terminal
+tensorboard --logdir=./runs
+```
+
+Then visit http://localhost:6006 to monitor training.
+
+### Command Line Arguments
+
+- `--config` / `-c`: Path to configuration file (required)
+- `--gpu` / `-g`: GPU id(s) to use (default: "-1" for CPU)
+- `--save_data` / `-sd`: Save preprocessed dataset
+- `--restore_data` / `-rd`: Restore preprocessed dataset
+- `--save_system` / `-ss`: Save trained model
+- `--restore_system` / `-rs`: Restore trained model
+- `--debug` / `-d`: Debug mode using validation set
+- `--interact` / `-i`: Interactive mode
+- `--tensorboard` / `-tb`: Enable tensorboard logging
+
+## Method
+
+### Problem Statement
+
+Traditional conversational recommender systems often suffer from fairness issues, where certain groups of items or users may receive disproportionate treatment. TFairCRS addresses these challenges by incorporating fairness constraints into the recommendation process.
+
+### Approach
+
+Our method introduces fairness-aware mechanisms that:
+
+1. **Fairness-aware User Modeling**: Ensures balanced representation across different user groups
+2. **Fair Item Exposure**: Guarantees equitable visibility for items across different categories
+3. **Bias Mitigation**: Reduces demographic and popularity biases in recommendations
+4. **Multi-objective Optimization**: Balances recommendation accuracy with fairness metrics
+
+### Architecture
+
+TFairCRS builds upon existing CRS models (KGSF, KBRD, TG-ReDial, etc.) and extends them with fairness-aware components.
 
 ## Datasets
 
-We have collected and preprocessed 6 commonly-used human-annotated datasets, and each dataset was matched with proper KGs as shown below:
+We evaluate TFairCRS on multiple standard CRS datasets:
 
-|                           Dataset                            | Dialogs | Utterances |   Domains    | Task Definition | Entity KG  |  Word KG   |
-| :----------------------------------------------------------: | :-----: | :--------: | :----------: | :-------------: | :--------: | :--------: |
-|       [ReDial](https://redialdata.github.io/website/)        | 10,006  |  182,150   |    Movie     |       --        |  DBpedia   | ConceptNet |
-|      [TG-ReDial](https://github.com/RUCAIBox/TG-ReDial)      | 10,000  |  129,392   |    Movie     |   Topic Guide   | CN-DBpedia |   HowNet   |
-|        [GoRecDial](https://arxiv.org/abs/1909.03922)         |  9,125  |  170,904   |    Movie     |  Action Choice  |  DBpedia   | ConceptNet |
-|        [DuRecDial](https://arxiv.org/abs/2005.03954)         | 10,200  |  156,000   | Movie, Music |    Goal Plan    | CN-DBpedia |   HowNet   |
-|      [INSPIRED](https://github.com/sweetpeach/Inspired)      |  1,001  |   35,811   |    Movie     | Social Strategy |  DBpedia   | ConceptNet |
-| [OpenDialKG](https://github.com/facebookresearch/opendialkg) | 13,802  |   91,209   | Movie, Book  |  Path Generate  |  DBpedia   | ConceptNet |
+| Dataset | Dialogs | Utterances | Domain | Knowledge Graph |
+|---------|---------|------------|--------|-----------------|
+| [ReDial](https://redialdata.github.io/website/) | 10,006 | 182,150 | Movie | DBpedia + ConceptNet |
+| [TG-ReDial](https://github.com/RUCAIBox/TG-ReDial) | 10,000 | 129,392 | Movie | CN-DBpedia + HowNet |
+| [INSPIRED](https://github.com/sweetpeach/Inspired) | 1,001 | 35,811 | Movie | DBpedia + ConceptNet |
 
+## Experiments
 
+### Evaluation Metrics
 
-## Performance
+We evaluate TFairCRS on both **recommendation quality** and **fairness** metrics:
 
-We have trained and test the integrated models on the TG-Redial dataset, which is split into training, validation and test sets using a ratio of 8:1:1. For each conversation, we start from the first utterance, and generate reply utterances or recommendations in turn by our model. We perform the evaluation on the three sub-tasks.
+**Recommendation Metrics:**
+- Hit@{1, 10, 50}
+- MRR@{1, 10, 50}
+- NDCG@{1, 10, 50}
 
-### Recommendation Task
+**Conversation Metrics:**
+- BLEU-{1, 2, 3, 4}
+- Distinct-{1, 2, 3, 4}
+- Embedding metrics (Average, Extreme, Greedy)
+- Perplexity (PPL)
 
-|   Model   |    Hit@1    |   Hit@10   |   Hit@50   |    MRR@1    |   MRR@10   |   MRR@50   |   NDCG@1    |  NDCG@10   |  NDCG@50   |
-| :-------: | :---------: | :--------: | :--------: | :---------: | :--------: | :--------: | :---------: | :--------: | :--------: |
-|  SASRec   |  0.000446   |  0.00134   |   0.0160   |   0.000446  |  0.000576  |  0.00114   |  0.000445   |  0.00075   |  0.00380   |
-|  TextCNN  |   0.00267   |   0.0103   |   0.0236   |   0.00267   |  0.00434   |  0.00493   |   0.00267   |  0.00570   |  0.00860   |
-|   BERT    |   0.00722   |  0.00490   |   0.0281   |   0.00722   |   0.0106   |   0.0124   |   0.00490   |   0.0147   |   0.0239   |
-|   KBRD    |   0.00401   |   0.0254   |   0.0588   |   0.00401   |  0.00891   |   0.0103   |   0.00401   |   0.0127   |   0.0198   |
-|   KGSF    |   0.00535   | **0.0285** | **0.0771** |   0.00535   |   0.0114   | **0.0135** |   0.00535   | **0.0154** | **0.0259** |
-| TG-ReDial | **0.00793** |   0.0251   |   0.0524   | **0.00793** | **0.0122** |   0.0134   | **0.00793** |   0.0152   |   0.0211   |
+**Fairness Metrics:**
+- Demographic parity
+- Equal opportunity
+- Exposure fairness
+- Statistical parity difference
 
+### Results
 
-### Conversation Task
+*Results will be updated upon publication.*
 
-|    Model    |  BLEU@1   |  BLEU@2   |   BLEU@3   |   BLEU@4   |  Dist@1  |  Dist@2  |  Dist@3  |  Dist@4  |  Average  |  Extreme  |  Greedy   |   PPL    |
-| :---------: | :-------: | :-------: | :--------: | :--------: | :------: | :------: | :------: | :------: | :-------: | :-------: | :-------: | :------: |
-|    HERD     |   0.120   |  0.0141   |  0.00136   |  0.000350  |  0.181   |  0.369   |  0.847   |   1.30   |   0.697   |   0.382   |   0.639   |   472    |
-| Transformer |   0.266   |  0.0440   |   0.0145   |  0.00651   |  0.324   |  0.837   |   2.02   |   3.06   |   0.879   |   0.438   |   0.680   |   30.9   |
-|    GPT2     |  0.0858   |  0.0119   |  0.00377   |   0.0110   | **2.35** | **4.62** | **8.84** | **12.5** |   0.763   |   0.297   |   0.583   |   9.26   |
-|    KBRD     |   0.267   |  0.0458   |   0.0134   |  0.00579   |  0.469   |   1.50   |   3.40   |   4.90   |   0.863   |   0.398   |   0.710   |   52.5   |
-|    KGSF     | **0.383** | **0.115** | **0.0444** | **0.0200** |  0.340   |  0.910   |   3.50   |   6.20   | **0.888** | **0.477** | **0.767** |   50.1   |
-|  TG-ReDial  |   0.125   |  0.0204   |  0.00354   |  0.000803  |  0.881   |   1.75   |   7.00   |   12.0   |   0.810   |   0.332   |   0.598   | **7.41** |
-
-
-### Policy Task
-
-|   Model    |   Hit@1   |  Hit@10   |  Hit@50   |   MRR@1   |  MRR@10   |  MRR@50   |  NDCG@1   |  NDCG@10  |  NDCG@50  |
-| :--------: | :-------: | :-------: | :-------: | :-------: | :-------: | :-------: | :-------: | :-------: | :-------: |
-|    MGCG    |   0.591   |   0.818   |   0.883   |   0.591   |   0.680   |   0.683   |   0.591   |   0.712   |   0.729   |
-| Conv-BERT  |   0.597   |   0.814   |   0.881   |   0.597   |   0.684   |   0.687   |   0.597   |   0.716   |   0.731   |
-| Topic-BERT |   0.598   |   0.828   |   0.885   |   0.598   |   0.690   |   0.693   |   0.598   |   0.724   |   0.737   |
-| TG-ReDial  | **0.600** | **0.830** | **0.893** | **0.600** | **0.693** | **0.696** | **0.600** | **0.727** | **0.741** |
-
-The above results were obtained from our CRSLab in preliminary experiments. However, these algorithms were implemented and tuned based on our understanding and experiences, which may not achieve their optimal performance. If you could yield a better result for some specific algorithm, please kindly let us know. We will update this table after the results are verified.
-
-## Releases
-
-| Releases |     Date      |   Features   |
-| :------: | :-----------: | :----------: |
-|  v0.1.1  | 1 / 4 / 2021  | Basic CRSLab |
-|  v0.1.2  | 3 / 28 / 2021 |    CRSLab    |
-
-
-
-## Contributions
-
-Please let us know if you encounter a bug or have any suggestions by [filing an issue](https://github.com/RUCAIBox/CRSLab/issues).
-
-We welcome all contributions from bug fixes to new features and extensions.
-
-We expect all contributions discussed in the issue tracker and going through PRs.
-
-We thank the nice contributions through PRs from [@shubaoyu](https://github.com/shubaoyu), [@ToheartZhang](https://github.com/ToheartZhang).
-
-
-
-## Citing
-
-If you find CRSLab useful for your research or development, please cite our [Paper](https://arxiv.org/pdf/2101.00939.pdf):
+## Project Structure
 
 ```
+TFairCRS/
+├── config/              # Configuration files
+│   ├── crs/            # CRS model configs
+│   ├── conversation/   # Conversation model configs
+│   └── recommendation/ # Recommendation model configs
+├── data/               # Dataset directory
+├── run_crslab.py       # Main entry point
+├── requirements.txt    # Python dependencies
+└── README.md          # This file
+```
+
+## Citation
+
+If you use this code or find our work helpful, please cite:
+
+```bibtex
+@article{tfaircrs2024,
+    title={TFairCRS: Towards Fairness in Conversational Recommender Systems},
+    author={[Your Name]},
+    year={2024},
+    journal={[Conference/Journal Name]}
+}
+```
+
+## Acknowledgments
+
+This project is built on top of [CRSLab](https://github.com/RUCAIBox/CRSLab). We thank the CRSLab team for their excellent framework.
+
+```bibtex
 @article{crslab,
     title={CRSLab: An Open-Source Toolkit for Building Conversational Recommender System},
     author={Kun Zhou, Xiaolei Wang, Yuanhang Zhou, Chenzhan Shang, Yuan Cheng, Wayne Xin Zhao, Yaliang Li, Ji-Rong Wen},
@@ -276,15 +255,6 @@ If you find CRSLab useful for your research or development, please cite our [Pap
 }
 ```
 
-
-
-## Team
-
-**CRSLab** was developed and maintained by [AI Box](http://aibox.ruc.edu.cn/) group in RUC.
-
-
-
 ## License
 
-**CRSLab** uses [MIT License](./LICENSE).
-
+This project is licensed under the [MIT License](./LICENSE).
