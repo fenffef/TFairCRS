@@ -231,17 +231,6 @@ TFairCRS/
 
 ## Citation
 
-If you use this code or find our work helpful, please cite:
-
-```bibtex
-@article{tfaircrs2024,
-    title={TFairCRS: Towards Fairness in Conversational Recommender Systems},
-    author={[Your Name]},
-    year={2024},
-    journal={[Conference/Journal Name]}
-}
-```
-
 ## Acknowledgments
 
 This project is built on top of [CRSLab](https://github.com/RUCAIBox/CRSLab). We thank the CRSLab team for their excellent framework.
